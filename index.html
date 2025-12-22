@@ -175,9 +175,17 @@ var LZString=function(){var r=String.fromCharCode,o="ABCDEFGHIJKLMNOPQRSTUVWXYZa
   letter-spacing: 0.03em;
 }
 body {
-  padding-top: 56px;
+  padding-top: 3rem; /* navbar + pieni turvaväli */
 }
 
+/* =========================================
+   PIILOTA NAVBAR KANSISIVULLA (VARMA)
+   ========================================= */
+
+
+body.hide-navbar .navbar-fixed {
+  display: none !important;
+}
 
 /* ============================================================
    POISTU-NAPPI – YKSI KEHYS, SELKEÄ VAROITUSVÄRI
@@ -502,9 +510,100 @@ a.macro-link {
   cursor: pointer;
 }
 
+/* ============================================================
+   KANSISIVU – KOKO SIVU KLIKATTAVA JULISTE
+   ============================================================ */
+
+/* Koko sivun peittävä linkki */
+.cover-link {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+
+  display: block;
+  text-decoration: none;
+}
+
+/* Julistemainen kansi */
+.cover-poster {
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  padding-top: 18vh; /* otsikko ylemmäs */
+
+  background: var(--bg-body);
+  cursor: pointer;
+}
+
+/* Otsikko */
+.cover-title {
+  font-family: "JetBrains Mono","Fira Code",Consolas,monospace;
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  color: var(--accent-1);
+  text-align: center;
+}
+
+/* ============================================================
+   NAVBAR PIILOON KANSISIVULLA
+   ============================================================ */
+
+body.hide-navbar .navbar-fixed {
+  display: none !important;
+}
+</style><script role="script" id="twine-user-script" type="text/twine-javascript">(function () {
+  "use strict";
+
+  /* PASSAGEN ALKAESSA */
+  $(document).on(":passagestart", function (event) {
+    if (!event || !event.passage) return;
+
+    const body = document.body;
+    const name = event.passage.name;
+
+    /* KANSISIVU */
+    if (name === "Alku") {
+      body.classList.add("hide-navbar");
+      return;
+    }
+
+    /* MUUT SIVUT */
+    body.classList.remove("hide-navbar");
+
+    if (!document.querySelector(".navbar-fixed")) {
+      const nav = document.createElement("div");
+      nav.className = "navbar-fixed";
+
+      const back = document.createElement("button");
+      back.className = "btn";
+      back.textContent = "← Takaisin";
+      back.onclick = () => {
+        if (State.length > 0) Engine.backward();
+      };
+
+      const exit = document.createElement("button");
+      exit.className = "btn btn--danger";
+      exit.textContent = "Poistu";
+      exit.onclick = () => {
+        if (confirm("Haluatko varmasti poistua tehtävästä?")) {
+          Engine.play("Start");
+        }
+      };
+
+      nav.append(back, exit);
+      document.body.appendChild(nav);
+    }
+  });
+
+})();
 
 
-</style><script role="script" id="twine-user-script" type="text/twine-javascript">
+
+
+
 /* LOMAKKEEN VASTAUSTEN LATAUS TXT-TIEDOSTONA */
 
 window.downloadAmmattitutkimus = function () {
@@ -560,13 +659,8 @@ window.downloadAmmattitutkimus = function () {
 
 /* Poistu-painike (sulje välilehti) */
 
-window.confirmExitStory = function () {
-  const ok = window.confirm("Haluatko varmasti sulkea esityksen?");
-  if (ok) {
-    window.close();
-  }
-};
-</script><tw-passagedata pid="1" name="StoryInit" tags="" position="750,100" size="100,100">:: StoryInit
+
+</script><tw-tag name="Cover" color="green"></tw-tag><tw-passagedata pid="1" name="StoryInit" tags="" position="750,100" size="100,100">:: StoryInit
 /* Pisteet / testi */
 &lt;&lt;set $pisteet = 0&gt;&gt;
 &lt;&lt;set $maxKysymykset = 10&gt;&gt;
@@ -1549,6 +1643,15 @@ Yliopisto-opinnoissa keskitytään teoreettiseen osaamiseen ajatteluun ja tutkim
   &lt;/span&gt;
 
 &lt;/div&gt;
+</tw-passagedata><tw-passagedata pid="38" name="Alku" tags="" position="425,50" size="100,100">&lt;div class=&quot;cover-page&quot; role=&quot;button&quot; tabindex=&quot;0&quot;&gt;
+  &lt;h1 class=&quot;cover-title&quot;&gt;ICT-ala&lt;/h1&gt;
+&lt;/div&gt;
+
+&lt;&lt;script&gt;&gt;
+$(document).one(&quot;click keypress&quot;, function () {
+  Engine.play(&quot;Start&quot;);
+});
+&lt;&lt;/script&gt;&gt;
 </tw-passagedata></tw-storydata>
 	<script id="script-sugarcube" type="text/javascript">
 	/*! SugarCube JS */
