@@ -514,37 +514,40 @@ a.macro-link {
    KANSISIVU – KOKO SIVU KLIKATTAVA JULISTE
    ============================================================ */
 
-/* Koko sivun peittävä linkki */
-.cover-link {
+/* Koko sivun peittävä klikattava alue */
+.cover-page {
   position: fixed;
   inset: 0;
   z-index: 10;
-
-  display: block;
-  text-decoration: none;
-}
-
-/* Julistemainen kansi */
-.cover-poster {
-  width: 100%;
-  height: 100%;
 
   display: flex;
   justify-content: center;
   align-items: flex-start;
 
-  padding-top: 18vh; /* otsikko ylemmäs */
+  padding-top: 18vh; /* otsikko ylemmäs = julistefiilis */
 
-  background: var(--bg-body);
   cursor: pointer;
+  text-align: center;
+
+  /* Taustaväri (käyttää tarinan pääväriä) */
+  background: var(--bg-body);
 }
 
-/* Otsikko */
+/* Iso otsikko */
 .cover-title {
   font-family: "JetBrains Mono","Fira Code",Consolas,monospace;
   font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+
   color: var(--accent-1);
-  text-align: center;
+  text-shadow: 0 0 22px rgba(0,0,0,0.6);
+}
+
+/* Hover-vihje */
+.cover-page:hover {
+  filter: brightness(1.06);
 }
 
 /* ============================================================
@@ -1643,7 +1646,8 @@ Yliopisto-opinnoissa keskitytään teoreettiseen osaamiseen ajatteluun ja tutkim
   &lt;/span&gt;
 
 &lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="38" name="Alku" tags="" position="425,50" size="100,100">&lt;div class=&quot;cover-page&quot; role=&quot;button&quot; tabindex=&quot;0&quot;&gt;
+</tw-passagedata><tw-passagedata pid="38" name="Alku" tags="" position="425,50" size="100,100">
+&lt;div class=&quot;cover-page&quot; role=&quot;button&quot; tabindex=&quot;0&quot;&gt;
   &lt;h1 class=&quot;cover-title&quot;&gt;ICT-ala&lt;/h1&gt;
 &lt;/div&gt;
 
