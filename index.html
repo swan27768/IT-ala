@@ -104,7 +104,7 @@ var LZString=function(){var r=String.fromCharCode,o="ABCDEFGHIJKLMNOPQRSTUVWXYZa
 		<div id="init-lacking"><p>Browser lacks capabilities required to play.</p><p>Upgrade or switch to another browser.</p></div>
 		<div id="init-loading"><div>Loading&hellip;</div></div>
 	</div>
-	<tw-storydata name="IT-ala" startnode="38" creator="Twine" creator-version="2.11.1" format="SugarCube" format-version="2.37.3" ifid="192a4f8a-17de-4d05-8696-9d84df4cfc9f" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* ============================================================
+	<tw-storydata name="IT-ala" startnode="36" creator="Twine" creator-version="2.11.1" format="SugarCube" format-version="2.37.3" ifid="192a4f8a-17de-4d05-8696-9d84df4cfc9f" options="" tags="" zoom="1" hidden><style role="stylesheet" id="twine-user-stylesheet" type="text/twine-css">/* ============================================================
    IT / CODE -TEEMA (NEON / TERMINAL)
    ============================================================ */
 
@@ -144,44 +144,49 @@ var LZString=function(){var r=String.fromCharCode,o="ABCDEFGHIJKLMNOPQRSTUVWXYZa
   display: none !important;
 }
 
-/* ============================================================
-   2. NAVBAR – YLÄPALKKI
-   ============================================================ */
+/* =========================================================
+   NAVBAR – KEVYT JA HUOMAAMATON
+   ========================================================= */
 
 .navbar-fixed {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 9999;
+  z-index: 999;
 
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
 
-  padding: 0.35rem 0.75rem;   /* ⬅️ pienempi */
-  min-height: 42px;          /* ⬅️ selvästi matalampi */
-
-  background: rgba(8, 6, 18, 0.85); /* hieman läpinäkyvä */
-  backdrop-filter: blur(6px);
-  border-bottom: 1px solid var(--nav-border);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.55);
+  padding: 0.4rem 0.6rem;
+  background: var(--bg-body);
+  border-bottom: 1px solid rgba(0,0,0,0.08);
 }
-.navbar-fixed .btn {
-  min-width: auto;          /* ei pakotettua leveyttä */
-  padding: 0.4rem 0.9rem;   /* pienempi */
+
+.nav-btn {
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.35);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
   font-size: 0.85rem;
-  letter-spacing: 0.03em;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
 }
-body {
-  padding-top: 3rem; /* navbar + pieni turvaväli */
+
+.nav-exit {
+  color: #b91c1c;
+  border-color: #b91c1c;
 }
+
+body { padding-top: 2.4rem; }
+body.hide-navbar .navbar-fixed { display: none !important; }
+
 
 /* =========================================
    PIILOTA NAVBAR KANSISIVULLA (VARMA)
    ========================================= */
-
 
 body.hide-navbar .navbar-fixed {
   display: none !important;
@@ -217,8 +222,20 @@ body.hide-navbar .navbar-fixed {
   box-shadow:
     0 3px 0 rgba(0,0,0,0.7);
 }
+/* Poistu-nappi käyttää vain vaarateemaa – poista .btn:n kehys */
+.btn--danger {
+  border: none !important;
+  box-shadow: none !important;
+}
 
+.answer-group .btn--danger,
+.intro-nappi .btn--danger {
+  background: linear-gradient(180deg, #e53935, #c62828);
+  color: #ffffff !important;
 
+  border: 2px solid #c62828;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.35);
+}
 
 
 /* =====================
@@ -334,16 +351,7 @@ body.hide-navbar .navbar-fixed {
 .checkbox-rivi {
   margin: 0.25rem 0;
 }
-/* ============================================================
-   PÄÄNAPPIJÄRJESTELMÄ – ÄLÄ DUPLIKOI
-   Käytössä koko projektissa (linkit + buttonit)
-/* ============================================================
-   NAPPIJÄRJESTELMÄ – VALMIS (v1.0)
-   - Käytössä SugarCube-linkeille ja HTML-buttoneille
-   - Älä lisää uusia nappityylejä ilman syytä
-   ============================================================ */
 
-   ============================================================ */
 
 /* =====================
    9. NAPIT (UUSI JÄRJESTELMÄ)
@@ -554,116 +562,174 @@ a.macro-link {
    NAVBAR PIILOON KANSISIVULLA
    ============================================================ */
 
-body.hide-navbar .navbar-fixed {
-  display: none !important;
+
+/* Loppusivun toimintorivi – pakota samaan riviin */
+.intro-nappi.action-row {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 1rem !important;
 }
+
+/* SugarCube tekee wikilinkistä block → korjataan */
+.intro-nappi.action-row a,
+.intro-nappi.action-row .link-internal,
+.intro-nappi.action-row .macro-link {
+  display: inline-flex !important;
+  width: auto !important;
+  min-width: 200px;
+}
+
 </style><script role="script" id="twine-user-script" type="text/twine-javascript">(function () {
-  "use strict";
 
-  /* PASSAGEN ALKAESSA */
-  $(document).on(":passagestart", function (event) {
-    if (!event || !event.passage) return;
+  function buildNavbar() {
+    if (document.querySelector(".navbar-fixed")) return;
 
-    const body = document.body;
-    const name = event.passage.name;
+    const nav = document.createElement("div");
+    nav.className = "navbar-fixed";
 
-    /* KANSISIVU */
-    if (name === "Alku") {
-      body.classList.add("hide-navbar");
+    const back = document.createElement("button");
+    back.className = "nav-btn";
+    back.textContent = "← Edellinen";
+    back.onclick = () => { if (State.length > 0) Engine.backward(); };
+
+    const exit = document.createElement("button");
+    exit.className = "nav-btn nav-exit";
+    exit.textContent = "Poistu";
+    exit.onclick = () => {
+    State.reset();              // tyhjentää historian ja muuttujat
+    Engine.play("Kansi");       // menee oikeasti kansisivulle
+  };
+
+
+    nav.append(back, exit);
+    document.body.appendChild(nav);
+  }
+
+  function updateNavbar() {
+    const passage = State.passage;
+
+    if (passage === "Kansi" || passage === "Alku") {
+      document.body.classList.add("hide-navbar");
       return;
     }
 
-    /* MUUT SIVUT */
-    body.classList.remove("hide-navbar");
+    document.body.classList.remove("hide-navbar");
+    buildNavbar();
+  }
 
-    if (!document.querySelector(".navbar-fixed")) {
-      const nav = document.createElement("div");
-      nav.className = "navbar-fixed";
-
-      const back = document.createElement("button");
-      back.className = "btn";
-      back.textContent = "← Takaisin";
-      back.onclick = () => {
-        if (State.length > 0) Engine.backward();
-      };
-
-      const exit = document.createElement("button");
-      exit.className = "btn btn--danger";
-      exit.textContent = "Poistu";
-      exit.onclick = () => {
-        if (confirm("Haluatko varmasti poistua tehtävästä?")) {
-          Engine.play("Start");
-        }
-      };
-
-      nav.append(back, exit);
-      document.body.appendChild(nav);
-    }
-  });
+  // SugarCube-varma hook
+  $(document).on(":storyready :passagestart", updateNavbar);
 
 })();
 
+(function () {
+  "use strict";
 
+  const KEY = "ict_esitelma_autosave_v2";
 
+  const FIELDS = [
+    "koulutusPolku",
+    "tyotehtavat",
+    "tyopaikat",
+    "vahvuudet",
+    "hyvatPuolet",
+    "haasteet",
+    "palkkaus",
+    "yhteenvetoOmaNakyma"
+  ];
 
+  function load() {
+    let data = {};
+    try { data = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e){}
 
-/* LOMAKKEEN VASTAUSTEN LATAUS TXT-TIEDOSTONA */
+    FIELDS.forEach(id=>{
+      const el = document.querySelector(`[name="${id}"]`);
+      if (el && data[id]) {
+        el.value = data[id];
+        State.variables[id] = data[id];
+      }
+    });
+  }
 
-window.downloadAmmattitutkimus = function () {
-  const v = State.variables;
+  function save() {
+    const data = {};
+    FIELDS.forEach(id=>{
+      const el = document.querySelector(`[name="${id}"]`);
+      if (el) {
+        data[id] = el.value;
+        State.variables[id] = el.value;
+      }
+    });
+    localStorage.setItem(KEY, JSON.stringify(data));
+  }
 
-  const lines = [
-    "AMMATTITUTKIMUS – VASTAUKSET",
-    "==============================",
-    "",
-    "Valittu ammatti:",
-    (v.ammattiNimi || ""),
-    "",
-    "KOULUTUSPOLKU AMMATTIIN:",
-    (v.koulutusPolku || ""),
-    "",
-    "TYÖTEHTÄVÄT:",
-    (v.tyotehtavat || ""),
-    "",
-    "MAHDOLLISET TYÖPAIKAT:",
-    (v.tyopaikat || ""),
-    "",
-    "AMMATISSA TARVITTAVAT VAHVUUDET:",
-    (v.vahvuudet || ""),
-    "",
-    "HYVÄT PUOLET:",
-    (v.hyvatPuolet || ""),
-    "",
-    "HAASTEET:",
-    (v.haasteet || ""),
-    "",
-    "PALKKAUS:",
-    (v.palkkaus || ""),
-    "",
-    "OMA YHTEENVETO:",
-    (v.yhteenvetoOmaNakyma || ""),
-    "",
-    "------------------------------",
-    "Luotu interaktiivisesta ammattitutkimus-tehtävästä."
-  ].join("\n");
+  window.initAmmattiAutosave = function () {
+    load();
+    FIELDS.forEach(id=>{
+      const el = document.querySelector(`[name="${id}"]`);
+      if (el) el.addEventListener("input", save);
+    });
+  };
 
-  const blob = new Blob([lines], { type: "text/plain;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
+  window.resetAmmattitutkimus = function () {
+    FIELDS.forEach(id=>{
+      const el = document.querySelector(`[name="${id}"]`);
+      if (el) el.value = "";
+      State.variables[id] = "";
+    });
+    localStorage.removeItem(KEY);
+    alert("Vastaukset tyhjennetty.");
+  };
 
-  a.href = url;
-  a.download = "ammattitutkimus_vastaukset.txt";
+  window.downloadAmmattitutkimus = function () {
+    const v = State.variables;
 
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-};
+    const txt =
+`ESITELMÄ ICT-AMMATISTA: ${v.ammatti || ""}
 
-/* Poistu-painike (sulje välilehti) */
+1. Koulutuspolku:
+${v.koulutusPolku || ""}
 
+2. Työtehtävät:
+${v.tyotehtavat || ""}
 
-</script><tw-tag name="Cover" color="green"></tw-tag><tw-passagedata pid="1" name="StoryInit" tags="" position="750,100" size="100,100">:: StoryInit
+3. Työpaikat:
+${v.tyopaikat || ""}
+
+4. Vahvuudet:
+${v.vahvuudet || ""}
+
+5. Hyvät puolet:
+${v.hyvatPuolet || ""}
+
+6. Haasteet:
+${v.haasteet || ""}
+
+7. Palkkaus:
+${v.palkkaus || ""}
+
+8. Oma pohdinta:
+${v.yhteenvetoOmaNakyma || ""}`;
+
+    const blob = new Blob([txt], {type:"text/plain;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = (v.ammatti || "ICT_esitelma") + ".txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  
+})();
+
+</script><tw-tag name="Cover" color="green"></tw-tag><tw-passagedata pid="1" name="StoryInit" tags="" position="750,100" size="100,100">&lt;&lt;script&gt;&gt;
+State.reset();
+Engine.play(&quot;Alku&quot;)
+&lt;&lt;/script&gt;&gt;
+
 /* Pisteet / testi */
 &lt;&lt;set $pisteet = 0&gt;&gt;
 &lt;&lt;set $maxKysymykset = 10&gt;&gt;
@@ -712,35 +778,39 @@ window.downloadAmmattitutkimus = function () {
   &lt;&lt;set $score += 3&gt;&gt;
   &lt;&lt;goto &quot;K2&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="3" name="Loppusivu" tags="" position="875,625" size="100,100">&lt;div class=&quot;quiz-page&quot;&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="3" name="Loppusivu" tags="" position="875,500" size="100,100">&lt;div class=&quot;quiz-page&quot;&gt;
 
-&lt;h1&gt;Loppusanat – ICT-ala&lt;/h1&gt;
+&lt;h1&gt;Hienoa!&lt;/h1&gt;
 &lt;hr&gt;
 
 &lt;p&gt;
-Olet nyt tutustunut ICT-alaan ja siihen liittyviin opintoihin ja ammatteihin. ICT-ala on laaja ja monipuolinen, ja siihen mahtuu monenlaisia osaajia.
-&lt;/p&gt;
-
-&lt;p&gt;
-ICT-alalla tarvitaan esimerkiksi ongelmanratkaisua, yhteistyötaitoja, kiinnostusta tekniikkaan sekä halua oppia uutta. Kaiken ei tarvitse olla valmista heti – osaaminen kasvaa opiskelun ja kokemuksen myötä.
+Olet nyt tutustunut ICT-alaan ja siihen liittyviin opintoihin ja ammatteihin. ICT-ala on laaja ja  monipuolinen, ja siihen mahtuu monenlaisia osaajia. ICT-alalla tarvitaan esimerkiksi ongelmanratkaisua, yhteistyötaitoja, kiinnostusta tekniikkaan sekä halua oppia uutta. Kaiken ei tarvitse olla valmista heti – osaaminen kasvaa opiskelun ja kokemuksen myötä.
 &lt;/p&gt;
 
 &lt;p&gt;
 Muista: kiinnostuksen kohteet ja suunnitelmat voivat muuttua. Tärkeintä on olla utelias ja rohkea kokeilemaan.
 &lt;/p&gt;
 
-&lt;div class=&quot;answer-group&quot;&gt;
-  &lt;span class=&quot;btn btn--danger&quot;&gt;
-    &lt;&lt;link &quot;Poistu&quot;&gt;&gt;
-      &lt;&lt;script&gt;&gt;
-        if (confirm(&quot;Haluatko varmasti poistua tehtävästä?&quot;)) {
-          State.reset();
-          Engine.play(&quot;Start&quot;);
-        }
-      &lt;&lt;/script&gt;&gt;
-    &lt;&lt;/link&gt;&gt;
-  &lt;/span&gt;
+&lt;div class=&quot;info-text&quot;&gt;
+  &lt;p&gt;&lt;strong&gt;Muista tyhjentää tehtäväsivu ennen poistumista.&lt;/strong&gt;&lt;/p&gt;
+
+      &lt;div class=&quot;intro-nappi action-row&quot;&gt;
+
+        &lt;a class=&quot;macro-link btn&quot;
+           href=&quot;javascript:void(0)&quot;
+           onclick=&quot;resetAmmattitutkimus()&quot;&gt;
+           Tyhjennä
+        &lt;/a&gt;
+
+        &lt;a class=&quot;macro-link btn btn--danger&quot;&gt;
+          &lt;&lt;link &quot;Poistu&quot;&gt;&gt;
+            &lt;&lt;goto &quot;Kansi&quot;&gt;&gt;
+          &lt;&lt;/link&gt;&gt;
+        &lt;/a&gt;
+      &lt;/div&gt;
 &lt;/div&gt;
+
+
 
 
 
@@ -765,94 +835,77 @@ ICT-ala on tärkeä tulevaisuudessa, koska yhteiskunta toimii yhä enemmän digi
 
   &lt;/div&gt;
 &lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="5" name="Ammattitutkimus: lomake" tags="" position="875,375" size="100,100">&lt;div class=&quot;quiz-page&quot;&gt;
-&lt;h1&gt;Ammattitutkimus – ICT-ala&lt;/h1&gt;
-&lt;hr&gt;
+</tw-passagedata><tw-passagedata pid="5" name="Esitelmäpohja" tags="" position="875,375" size="100,100">&lt;&lt;script&gt;&gt;
+setTimeout(initAmmattiAutosave, 100);
+&lt;&lt;/script&gt;&gt;
+
+&lt;h2&gt;Esitelmä ammatista: &lt;&lt;print $ammatti&gt;&gt;&lt;/h2&gt;
+
 &lt;p&gt;
-Tässä tehtävässä tutkit yhtä ICT-alan ammattia. Tavoitteena on pohtia, millaista työ on ja voisiko se sopia sinulle.
+Tässä tehtävässä teet esitelmän valitsemastasi ICT-alan ammatista. Vastaa kysymyksiin omin sanoin ja mahdollisimman konkreettisesti. Vastaukset voit ladata tiedostona ja käyttää esitelmän pohjana Google Docsissa tai Slidesissa.
 &lt;/p&gt;
-&lt;p&gt;
-Käytä apuna luotettavia lähteitä, kuten: Työmarkkinatori, Duunitori, oppilaitosten sivut tai alan yritykset.Vastaa kohtiin mahdollisimman konkreettisesti ja &lt;strong&gt;omin sanoin&lt;/strong&gt;. &lt;br&gt;Lopuksi saat vastauksistasi yhteenvedon, jonka voit ladata tiedostona ja kopioida Google Docsiin tai Google Slidesiin viimeistelyä varten.
-&lt;/p&gt;
-&lt;!-- 1 --&gt;
-&lt;div class=&quot;lomake-ryhma&quot;&gt;
-  &lt;label class=&quot;lomake-label&quot;&gt;1. Tutkittava ammatti&lt;/label&gt;
-  &lt;p class=&quot;lomake-ohje&quot;&gt;
-    Minkä ICT-alan ammatin valitsit?
-  &lt;/p&gt;
-  &lt;&lt;textbox &quot;$ammattiNimi&quot; &quot;&quot;&gt;&gt;
-&lt;/div&gt;
-&lt;!-- 2 --&gt;
-&lt;div class=&quot;lomake-ryhma&quot;&gt;
-  &lt;label class=&quot;lomake-label&quot;&gt;2. Koulutuspolku ammattiin&lt;/label&gt;
-  &lt;p class=&quot;lomake-ohje&quot;&gt;
-    Millainen koulutus voi johtaa tähän ammattiin?
-  &lt;/p&gt;
-  &lt;&lt;textbox &quot;$koulutusPolku&quot; &quot;&quot;&gt;&gt;
-&lt;/div&gt;
-&lt;!-- 3 --&gt;
-&lt;div class=&quot;lomake-ryhma&quot;&gt;
-  &lt;label class=&quot;lomake-label&quot;&gt;3. Työtehtävät ja työpäivä&lt;/label&gt;
-  &lt;p class=&quot;lomake-ohje&quot;&gt;
-    Mitä työntekijä tekee tavallisena työpäivänä?
-  &lt;/p&gt;
-  &lt;&lt;textbox &quot;$tyotehtavat&quot; &quot;&quot;&gt;&gt;
-&lt;/div&gt;
-&lt;!-- 4 --&gt;
-&lt;div class=&quot;lomake-ryhma&quot;&gt;
-  &lt;label class=&quot;lomake-label&quot;&gt;4. Työpaikat&lt;/label&gt;
-  &lt;p class=&quot;lomake-ohje&quot;&gt;
-    Millaisissa yrityksissä tai organisaatioissa tätä työtä tehdään?
-  &lt;/p&gt;
-  &lt;&lt;textbox &quot;$tyopaikat&quot; &quot;&quot;&gt;&gt;
-&lt;/div&gt;
-&lt;!-- 5 --&gt;
-&lt;div class=&quot;lomake-ryhma&quot;&gt;
-  &lt;label class=&quot;lomake-label&quot;&gt;5. Tarvittavat taidot ja vahvuudet&lt;/label&gt;
-  &lt;p class=&quot;lomake-ohje&quot;&gt;
-    Millaisia taitoja ja ominaisuuksia työssä tarvitaan?
-  &lt;/p&gt;
-  &lt;&lt;textbox &quot;$vahvuudet&quot; &quot;&quot;&gt;&gt;
-&lt;/div&gt;
-&lt;!-- 6 --&gt;
-&lt;div class=&quot;lomake-ryhma&quot;&gt;
-  &lt;label class=&quot;lomake-label&quot;&gt;6. Ammatin hyvät puolet&lt;/label&gt;
-  &lt;p class=&quot;lomake-ohje&quot;&gt;
-    Mitkä asiat tekevät tästä ammatista kiinnostavan?
-  &lt;/p&gt;
-  &lt;&lt;textbox &quot;$hyvatPuolet&quot; &quot;&quot;&gt;&gt;
-&lt;/div&gt;
-&lt;!-- 7 --&gt;
-&lt;div class=&quot;lomake-ryhma&quot;&gt;
-  &lt;label class=&quot;lomake-label&quot;&gt;7. Ammatin haasteet&lt;/label&gt;
-  &lt;p class=&quot;lomake-ohje&quot;&gt;
-    Mitkä asiat voivat olla vaikeita tai kuormittavia?
-  &lt;/p&gt;
-  &lt;&lt;textbox &quot;$haasteet&quot; &quot;&quot;&gt;&gt;
-&lt;/div&gt;
-&lt;!-- 8 --&gt;
-&lt;div class=&quot;lomake-ryhma&quot;&gt;
-  &lt;label class=&quot;lomake-label&quot;&gt;8. Palkkaus&lt;/label&gt;
-  &lt;p class=&quot;lomake-ohje&quot;&gt;
-    Millainen palkkaus ammatissa on?
-  &lt;/p&gt;
-  &lt;&lt;textbox &quot;$palkkaus&quot; &quot;&quot;&gt;&gt;
+&lt;div class=&quot;info-text&quot;&gt;
+  &lt;p&gt;&lt;strong&gt;Tutustu myös ICT-alan koulutuksiin&lt;/strong&gt;&lt;/p&gt;
+  &lt;div class=&quot;intro-nappi&quot;&gt;
+    [[Tutustu ICT-alan koulutuksiin-&gt;Koulutus]]
+  &lt;/div&gt;
 &lt;/div&gt;
 
 &lt;div class=&quot;lomake-ryhma&quot;&gt;
-  &lt;label class=&quot;lomake-label&quot;&gt;9. Oma pohdintasi&lt;/label&gt;
-  &lt;p class=&quot;lomake-ohje&quot;&gt;
-    Miksi tämä ammatti voisi sopia sinulle – tai miksi ei?
-  &lt;/p&gt;
-  &lt;&lt;textbox &quot;$yhteenvetoOmaNakyma&quot; &quot;&quot;&gt;&gt;
+
+&lt;label class=&quot;lomake-label&quot;&gt;1. Koulutuspolku ammattiin&lt;/label&gt;
+&lt;p class=&quot;lomake-ohje&quot;&gt;Millainen koulutus voi johtaa tähän ammattiin?&lt;/p&gt;
+&lt;textarea name=&quot;koulutusPolku&quot;&gt;&lt;/textarea&gt;
+
+&lt;label class=&quot;lomake-label&quot;&gt;2. Työtehtävät ja työpäivä&lt;/label&gt;
+&lt;p class=&quot;lomake-ohje&quot;&gt;Mitä työntekijä tekee tavallisena työpäivänä?&lt;/p&gt;
+&lt;textarea name=&quot;tyotehtavat&quot;&gt;&lt;/textarea&gt;
+
+&lt;label class=&quot;lomake-label&quot;&gt;3. Työpaikat&lt;/label&gt;
+&lt;p class=&quot;lomake-ohje&quot;&gt;Millaisissa yrityksissä tai organisaatioissa tätä työtä tehdään?&lt;/p&gt;
+&lt;textarea name=&quot;tyopaikat&quot;&gt;&lt;/textarea&gt;
+
+&lt;label class=&quot;lomake-label&quot;&gt;4. Tarvittavat taidot ja vahvuudet&lt;/label&gt;
+&lt;p class=&quot;lomake-ohje&quot;&gt;Millaisia taitoja ja ominaisuuksia työssä tarvitaan?&lt;/p&gt;
+&lt;textarea name=&quot;vahvuudet&quot;&gt;&lt;/textarea&gt;
+
+&lt;label class=&quot;lomake-label&quot;&gt;5. Ammatin hyvät puolet&lt;/label&gt;
+&lt;p class=&quot;lomake-ohje&quot;&gt;Mitkä asiat tekevät tästä ammatista kiinnostavan?&lt;/p&gt;
+&lt;textarea name=&quot;hyvatPuolet&quot;&gt;&lt;/textarea&gt;
+
+&lt;label class=&quot;lomake-label&quot;&gt;6. Ammatin haasteet&lt;/label&gt;
+&lt;p class=&quot;lomake-ohje&quot;&gt;Mitkä asiat voivat olla vaikeita tai kuormittavia?&lt;/p&gt;
+&lt;textarea name=&quot;haasteet&quot;&gt;&lt;/textarea&gt;
+
+&lt;label class=&quot;lomake-label&quot;&gt;7. Palkkaus&lt;/label&gt;
+&lt;p class=&quot;lomake-ohje&quot;&gt;Millainen palkkaus ammatissa on?&lt;/p&gt;
+&lt;textarea name=&quot;palkkaus&quot;&gt;&lt;/textarea&gt;
+
+&lt;label class=&quot;lomake-label&quot;&gt;8. Oma pohdintasi&lt;/label&gt;
+&lt;p class=&quot;lomake-ohje&quot;&gt;Miksi tämä ammatti voisi sopia sinulle – tai miksi ei?&lt;/p&gt;
+&lt;textarea name=&quot;yhteenvetoOmaNakyma&quot;&gt;&lt;/textarea&gt;
+
 &lt;/div&gt;
-&lt;div class=&quot;answer-group&quot;&gt;
-  &lt;&lt;link &quot;Näytä yhteenveto&quot; class:&quot;btn btn--primary&quot;&gt;&gt;
-    &lt;&lt;goto &quot;Ammattitutkimus: yhteenveto&quot;&gt;&gt;
+
+&lt;div class=&quot;intro-nappi action-row&quot;&gt;
+
+  &lt;a class=&quot;macro-link&quot;
+     href=&quot;javascript:void(0)&quot;
+     onclick=&quot;downloadAmmattitutkimus()&quot;&gt;
+     Lataa tiedostoon
+  &lt;/a&gt;
+
+  &lt;a class=&quot;macro-link&quot;
+     href=&quot;javascript:void(0)&quot;
+     onclick=&quot;resetAmmattitutkimus()&quot;&gt;
+     Tyhjennä
+  &lt;/a&gt;
+
+  &lt;&lt;link &quot;Loppusanat&quot;&gt;&gt;
+    &lt;&lt;goto &quot;Loppusivu&quot;&gt;&gt;
   &lt;&lt;/link&gt;&gt;
+
 &lt;/div&gt;
-
-
 
 &lt;/div&gt;
 </tw-passagedata><tw-passagedata pid="6" name="Ammattitesti: alku" tags="" position="400,250" size="100,100">
@@ -932,58 +985,13 @@ Jos et ole vielä varma, mikä oppilaitos sopii sinulle, se on täysin normaalia
 &lt;&lt;/link&gt;&gt;
   &lt;/div&gt;
   &lt;div class=&quot;answer-group&quot;&gt;
-&lt;&lt;link &quot;Tehtävä&quot;&gt;&gt;
-  &lt;&lt;goto &quot;Ammattitutkimus: lomake&quot;&gt;&gt;
+&lt;&lt;link &quot;Takaisin tehtävään&quot;&gt;&gt;
+  &lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
   &lt;/div&gt;
 &lt;hr&gt;
 
-</tw-passagedata><tw-passagedata pid="8" name="Ammattitutkimus: yhteenveto" tags="" position="875,500" size="100,100">
-&lt;div class=&quot;quiz-page&quot;&gt;
-  &lt;h1&gt;Ammattitutkimuksen yhteenveto&lt;/h1&gt;
-  &lt;hr&gt;
-  &lt;p&gt;
- Alla on yhteenveto vastauksistasi. Voit kopioida tekstin omaan Google Docs -dokumenttiin tai ladata vastaukset tekstitiedostona.
-  &lt;/p&gt;
-
-  &lt;h2&gt;Valittu ammatti&lt;/h2&gt;
-  &lt;p&gt;&lt;strong&gt;Ammatti:&lt;/strong&gt; &lt;&lt;print $ammattiNimi&gt;&gt;&lt;/p&gt;
-
-  &lt;h2&gt;Koulutuspolku ammattiin&lt;/h2&gt;
-  &lt;p&gt;&lt;&lt;print $koulutusPolku&gt;&gt;&lt;/p&gt;
-
-  &lt;h2&gt;Työtehtävät&lt;/h2&gt;
-  &lt;p&gt;&lt;&lt;print $tyotehtavat&gt;&gt;&lt;/p&gt;
-
-  &lt;h2&gt;Mahdolliset työpaikat&lt;/h2&gt;
-  &lt;p&gt;&lt;&lt;print $tyopaikat&gt;&gt;&lt;/p&gt;
-
-  &lt;h2&gt;Ammatin vaatimat vahvuudet&lt;/h2&gt;
-  &lt;p&gt;&lt;&lt;print $vahvuudet&gt;&gt;&lt;/p&gt;
-
-  &lt;h2&gt;Hyvät puolet&lt;/h2&gt;
-  &lt;p&gt;&lt;&lt;print $hyvatPuolet&gt;&gt;&lt;/p&gt;
-
-  &lt;h2&gt;Haasteet&lt;/h2&gt;
-  &lt;p&gt;&lt;&lt;print $haasteet&gt;&gt;&lt;/p&gt;
-
-  &lt;h2&gt;Palkkaus&lt;/h2&gt;
-  &lt;p&gt;&lt;&lt;print $palkkaus&gt;&gt;&lt;/p&gt;
-  
-  &lt;h2&gt;Oma yhteenvetosi&lt;/h2&gt;
-  &lt;p&gt;&lt;&lt;print $yhteenvetoOmaNakyma&gt;&gt;&lt;/p&gt;
-
-&lt;div class=&quot;intro-nappi&quot;&gt;
-  &lt;button class=&quot;btn btn--primary btn--download&quot;
-          onclick=&quot;downloadAmmattitutkimus()&quot;&gt;
-    Lataa vastaukset tiedostona
-  &lt;/button&gt;
-&lt;/div&gt;
-
-
-
-&lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="9" name="K2" tags="" position="400,450" size="100,100">&lt;h2&gt;Kysymys 2 / 10&lt;/h2&gt;
+</tw-passagedata><tw-passagedata pid="8" name="K2" tags="" position="400,450" size="100,100">&lt;h2&gt;Kysymys 2 / 10&lt;/h2&gt;
 
 &lt;p&gt;Jos jokin sovellus tai laite ei toimi heti, sinä…&lt;/p&gt;
 &lt;div class=&quot;answer-group&quot;&gt;
@@ -1002,7 +1010,7 @@ Jos et ole vielä varma, mikä oppilaitos sopii sinulle, se on täysin normaalia
   &lt;&lt;set $score += 3&gt;&gt;
   &lt;&lt;goto &quot;K3&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="10" name="K3" tags="" position="400,525" size="100,100">
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="9" name="K3" tags="" position="400,525" size="100,100">
 &lt;h2&gt;Kysymys 3 / 10&lt;/h2&gt;
 
 &lt;p&gt;Millaisista koulutehtävistä pidät eniten?&lt;/p&gt;
@@ -1022,7 +1030,7 @@ Jos et ole vielä varma, mikä oppilaitos sopii sinulle, se on täysin normaalia
   &lt;&lt;set $score += 3&gt;&gt;
   &lt;&lt;goto &quot;K4&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="11" name="K5" tags="" position="400,625" size="100,100">:
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="10" name="K5" tags="" position="400,625" size="100,100">:
 &lt;h2&gt;Kysymys 5 / 10&lt;/h2&gt;
 
 &lt;p&gt;Millaisessa työssä viihdyt parhaiten?&lt;/p&gt;
@@ -1042,7 +1050,7 @@ Jos et ole vielä varma, mikä oppilaitos sopii sinulle, se on täysin normaalia
   &lt;&lt;set $score += 3&gt;&gt;
   &lt;&lt;goto &quot;K6&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="12" name="K6" tags="" position="400,700" size="100,100">&lt;h2&gt;Kysymys 6 / 10&lt;/h2&gt;
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="11" name="K6" tags="" position="400,700" size="100,100">&lt;h2&gt;Kysymys 6 / 10&lt;/h2&gt;
 
 &lt;p&gt;Kun opiskelet uutta asiaa, sinä…&lt;/p&gt;
 &lt;div class=&quot;answer-group&quot;&gt;
@@ -1061,7 +1069,7 @@ Jos et ole vielä varma, mikä oppilaitos sopii sinulle, se on täysin normaalia
   &lt;&lt;set $score += 3&gt;&gt;
   &lt;&lt;goto &quot;K7&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="13" name="K7" tags="" position="400,750" size="100,100">
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="12" name="K7" tags="" position="400,750" size="100,100">
 &lt;h2&gt;Kysymys 7 / 10&lt;/h2&gt;
 
 &lt;p&gt;Pystytkö keskittymään tehtävään pidemmän aikaa?&lt;/p&gt;
@@ -1081,7 +1089,7 @@ Jos et ole vielä varma, mikä oppilaitos sopii sinulle, se on täysin normaalia
   &lt;&lt;set $score += 3&gt;&gt;
   &lt;&lt;goto &quot;K8&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="14" name="K8" tags="" position="400,800" size="100,100">
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="13" name="K8" tags="" position="400,800" size="100,100">
 &lt;h2&gt;Kysymys 8 / 10&lt;/h2&gt;
 
 &lt;p&gt;Miten suhtaudut uusiin teknologioihin, kuten peleihin, sovelluksiin tai tekoälyyn?&lt;/p&gt;
@@ -1102,7 +1110,7 @@ Jos et ole vielä varma, mikä oppilaitos sopii sinulle, se on täysin normaalia
   &lt;&lt;set $score += 3&gt;&gt;
   &lt;&lt;goto &quot;K9&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="15" name="K9" tags="" position="400,875" size="100,100">
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="14" name="K9" tags="" position="400,875" size="100,100">
 &lt;h2&gt;Kysymys 9 / 10&lt;/h2&gt;
 
 &lt;p&gt;Millainen työskentely sopii sinulle parhaiten?&lt;/p&gt;
@@ -1122,7 +1130,7 @@ Jos et ole vielä varma, mikä oppilaitos sopii sinulle, se on täysin normaalia
   &lt;&lt;set $score += 3&gt;&gt;
   &lt;&lt;goto &quot;K10&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="16" name="K10" tags="" position="400,950" size="100,100">
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="15" name="K10" tags="" position="400,950" size="100,100">
 &lt;h2&gt;Kysymys 10 / 10&lt;/h2&gt;
 
 &lt;p&gt;Voisitko kuvitella tekeväsi työtä, jossa käytetään paljon tietokonetta?&lt;/p&gt;
@@ -1143,7 +1151,7 @@ Jos et ole vielä varma, mikä oppilaitos sopii sinulle, se on täysin normaalia
   &lt;&lt;set $score += 3&gt;&gt;
   &lt;&lt;goto &quot;Tulos&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="17" name="Tulos" tags="" position="400,1000" size="100,100">
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="16" name="Tulos" tags="" position="400,1000" size="100,100">
 &lt;&lt;if $score &lt;= 16&gt;&gt;
   &lt;&lt;goto &quot;Palaute A&quot;&gt;&gt;
 &lt;&lt;elseif $score &lt;= 23&gt;&gt;
@@ -1151,7 +1159,7 @@ Jos et ole vielä varma, mikä oppilaitos sopii sinulle, se on täysin normaalia
 &lt;&lt;else&gt;&gt;
   &lt;&lt;goto &quot;Palaute C&quot;&gt;&gt;
 &lt;&lt;/if&gt;&gt;
-</tw-passagedata><tw-passagedata pid="18" name="Palaute A" tags="" position="325,1075" size="100,100">
+</tw-passagedata><tw-passagedata pid="17" name="Palaute A" tags="" position="325,1075" size="100,100">
 &lt;h1&gt;ICT-ala tutuksi&lt;/h1&gt;
 
 &lt;p&gt;
@@ -1171,7 +1179,7 @@ Teknologia on mukana monissa ammateissa, ja ICT-taitoja voi oppia vähitellen. K
 &lt;&lt;link &quot;Seuraava: ICT-koulutusvalintatesti &quot;&gt;&gt;
   &lt;&lt;goto &quot;Ohjaustesti&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="19" name="Palaute B" tags="" position="400,1075" size="100,100">
+  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="18" name="Palaute B" tags="" position="400,1075" size="100,100">
 &lt;h1&gt;Hyvät valmiudet ICT-alalle&lt;/h1&gt;
 
 &lt;p&gt;
@@ -1190,7 +1198,7 @@ Sinulla on monia taitoja, joista on hyötyä ICT-alalla. Pidät uuden oppimisest
 &lt;&lt;link &quot;Seuraava: ICT-koulutusvalintatesti &quot;&gt;&gt;
   &lt;&lt;goto &quot;Ohjaustesti&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="20" name="Palaute C" tags="" position="450,1075" size="100,100">
+  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="19" name="Palaute C" tags="" position="450,1075" size="100,100">
 &lt;h1&gt;ICT-ala voisi sopia sinulle hyvin&lt;/h1&gt;
 
 &lt;p&gt;
@@ -1209,7 +1217,7 @@ Olet kiinnostunut teknologiasta ja jaksat ratkaista ongelmia. Nämä ovat tärke
 &lt;&lt;link &quot;Seuraava: ICT-koulutusvalintatesti &quot;&gt;&gt;
   &lt;&lt;goto &quot;Ohjaustesti&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="21" name="K4" tags="" position="400,575" size="100,100">
+  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="20" name="K4" tags="" position="400,575" size="100,100">
 &lt;h2&gt;Kysymys 4 / 10&lt;/h2&gt;
 
 &lt;p&gt;Uuden ohjelman tai laitteen opettelu tuntuu sinusta…&lt;/p&gt;
@@ -1229,7 +1237,7 @@ Olet kiinnostunut teknologiasta ja jaksat ratkaista ongelmia. Nämä ovat tärke
   &lt;&lt;set $score += 3&gt;&gt;
   &lt;&lt;goto &quot;K5&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-&lt;/div&gt;</tw-passagedata><tw-passagedata pid="22" name="Ohjaustesti" tags="" position="575,250" size="100,100">
+&lt;/div&gt;</tw-passagedata><tw-passagedata pid="21" name="Ohjaustesti" tags="" position="575,250" size="100,100">
 &lt;h1&gt;ICT-alan koulutusvalintatesti&lt;/h1&gt;
 &lt;p&gt;
 Tämä testi auttaa pohtimaan, mikä ICT-alan koulutus voisi sopia sinulle. Valitse aina se vaihtoehto, joka tuntuu sinulle luontevimmalta.
@@ -1244,7 +1252,7 @@ Tämä testi auttaa pohtimaan, mikä ICT-alan koulutus voisi sopia sinulle. Vali
 &lt;&lt;/link&gt;&gt;
 &lt;/div&gt;
 
-</tw-passagedata><tw-passagedata pid="23" name="OT1" tags="" position="575,350" size="100,100">
+</tw-passagedata><tw-passagedata pid="22" name="OT1" tags="" position="575,350" size="100,100">
 &lt;h2&gt;Kysymys 1 / 8&lt;/h2&gt;
 
 &lt;p&gt;Kun jokin laite tai ohjelma ei toimi, sinä mieluummin…&lt;/p&gt;
@@ -1272,7 +1280,7 @@ Tämä testi auttaa pohtimaan, mikä ICT-alan koulutus voisi sopia sinulle. Vali
 &lt;&lt;/link&gt;&gt;
 
 &lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="24" name="OT2" tags="" position="575,450" size="100,100">
+</tw-passagedata><tw-passagedata pid="23" name="OT2" tags="" position="575,450" size="100,100">
 &lt;h2&gt;Kysymys 2 / 8&lt;/h2&gt;
 
 &lt;p&gt;Millainen tekeminen kiinnostaa sinua eniten?&lt;/p&gt;
@@ -1300,7 +1308,7 @@ Tämä testi auttaa pohtimaan, mikä ICT-alan koulutus voisi sopia sinulle. Vali
 &lt;&lt;/link&gt;&gt;
 
 &lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="25" name="OT3" tags="" position="575,550" size="100,100">
+</tw-passagedata><tw-passagedata pid="24" name="OT3" tags="" position="575,550" size="100,100">
 &lt;h2&gt;Kysymys 3 / 8&lt;/h2&gt;
 
 &lt;p&gt;Missä ympäristössä viihdyt parhaiten?&lt;/p&gt;
@@ -1328,7 +1336,7 @@ Tämä testi auttaa pohtimaan, mikä ICT-alan koulutus voisi sopia sinulle. Vali
 &lt;&lt;/link&gt;&gt;
 
 &lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="26" name="OT4" tags="" position="575,650" size="100,100">
+</tw-passagedata><tw-passagedata pid="25" name="OT4" tags="" position="575,650" size="100,100">
 &lt;h2&gt;Kysymys 4 / 8&lt;/h2&gt;
 
 &lt;p&gt;Kumpi tuntuu sinusta luontevammalta?&lt;/p&gt;
@@ -1356,7 +1364,7 @@ Tämä testi auttaa pohtimaan, mikä ICT-alan koulutus voisi sopia sinulle. Vali
 &lt;&lt;/link&gt;&gt;
 
 &lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="27" name="OT5" tags="" position="575,750" size="100,100">
+</tw-passagedata><tw-passagedata pid="26" name="OT5" tags="" position="575,750" size="100,100">
 &lt;h2&gt;Kysymys 5 / 8&lt;/h2&gt;
 
 &lt;p&gt;Millaisista tehtävistä pidät eniten?&lt;/p&gt;
@@ -1384,7 +1392,7 @@ Tämä testi auttaa pohtimaan, mikä ICT-alan koulutus voisi sopia sinulle. Vali
 &lt;&lt;/link&gt;&gt;
 
 &lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="28" name="OT6" tags="" position="575,850" size="100,100">
+</tw-passagedata><tw-passagedata pid="27" name="OT6" tags="" position="575,850" size="100,100">
 &lt;h2&gt;Kysymys 6 / 8&lt;/h2&gt;
 
 &lt;p&gt;Mitä haluaisit oppia lisää?&lt;/p&gt;
@@ -1412,7 +1420,7 @@ Tämä testi auttaa pohtimaan, mikä ICT-alan koulutus voisi sopia sinulle. Vali
 &lt;&lt;/link&gt;&gt;
 
 &lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="29" name="OT7" tags="" position="575,925" size="100,100">
+</tw-passagedata><tw-passagedata pid="28" name="OT7" tags="" position="575,925" size="100,100">
 &lt;h2&gt;Kysymys 7 / 8&lt;/h2&gt;
 
 &lt;p&gt;Millainen työskentely sopii sinulle parhaiten?&lt;/p&gt;
@@ -1440,7 +1448,7 @@ Tämä testi auttaa pohtimaan, mikä ICT-alan koulutus voisi sopia sinulle. Vali
 &lt;&lt;/link&gt;&gt;
 
 &lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="30" name="OT8" tags="" position="575,1000" size="100,100">
+</tw-passagedata><tw-passagedata pid="29" name="OT8" tags="" position="575,1000" size="100,100">
 &lt;h2&gt;Kysymys 8 / 8&lt;/h2&gt;
 
 &lt;p&gt;Kun opit uutta, pidät enemmän…&lt;/p&gt;
@@ -1468,7 +1476,7 @@ Tämä testi auttaa pohtimaan, mikä ICT-alan koulutus voisi sopia sinulle. Vali
 &lt;&lt;/link&gt;&gt;
 
 &lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="31" name="Tulos_Koulutus" tags="" position="575,1100" size="100,100">
+</tw-passagedata><tw-passagedata pid="30" name="Tulos_Koulutus" tags="" position="575,1100" size="100,100">
 &lt;&lt;set _max = Math.max($tuki, $ohjelma, $verkko, $elektro)&gt;&gt;
 
 &lt;&lt;if _max == $tuki&gt;&gt;
@@ -1480,7 +1488,7 @@ Tämä testi auttaa pohtimaan, mikä ICT-alan koulutus voisi sopia sinulle. Vali
 &lt;&lt;else&gt;&gt;
   &lt;&lt;goto &quot;Elektroniikka&quot;&gt;&gt;
 &lt;&lt;/if&gt;&gt;
-</tw-passagedata><tw-passagedata pid="32" name="IT-tuki" tags="" position="525,1175" size="100,100">
+</tw-passagedata><tw-passagedata pid="31" name="IT-tuki" tags="" position="525,1175" size="100,100">
 &lt;h1&gt;IT-tukihenkilö&lt;/h1&gt;
 
 &lt;p&gt;
@@ -1494,7 +1502,7 @@ Alla olevasta osiosta löydät oppilaitoksia, joissa voit opiskella ICT-alan per
 &lt;&lt;link &quot;Katso koulutusvaihtoehdot &quot;&gt;&gt;
   &lt;&lt;goto &quot;Koulutus&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="33" name="Ohjelmistokehitys" tags="" position="625,1175" size="100,100">
+  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="32" name="Ohjelmistokehitys" tags="" position="625,1175" size="100,100">
 &lt;h1&gt;Ohjelmistokehittäjä&lt;/h1&gt;
 
 &lt;p&gt;
@@ -1508,7 +1516,7 @@ Alla olevasta osiosta löydät oppilaitoksia, joissa voit opiskella ICT-alan per
 &lt;&lt;link &quot;Katso koulutusvaihtoehdot &quot;&gt;&gt;
   &lt;&lt;goto &quot;Koulutus&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="34" name="Tietoverkot" tags="" position="725,1175" size="100,100">
+  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="33" name="Tietoverkot" tags="" position="725,1175" size="100,100">
 &lt;h1&gt;Tietoverkkoasentaja&lt;/h1&gt;
 
 &lt;p&gt;
@@ -1522,7 +1530,7 @@ Alla olevasta osiosta löydät oppilaitoksia, joissa voit opiskella ICT-alan per
 &lt;&lt;link &quot;Katso koulutusvaihtoehdot &quot;&gt;&gt;
   &lt;&lt;goto &quot;Koulutus&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="35" name="Elektroniikka" tags="" position="825,1175" size="100,100">
+  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="34" name="Elektroniikka" tags="" position="825,1175" size="100,100">
 &lt;h1&gt;Elektroniikka- tai hyvinvointiteknologia-asentaja&lt;/h1&gt;
 
 &lt;p&gt;
@@ -1536,7 +1544,7 @@ Alla olevasta osiosta löydät oppilaitoksia, joissa voit opiskella ICT-alan per
 &lt;&lt;link &quot;Katso koulutusvaihtoehdot &quot;&gt;&gt;
   &lt;&lt;goto &quot;Koulutus&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
-  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="36" name="Korkeakoulut" tags="" position="950,250" size="100,100">&lt;hr&gt;
+  &lt;/div&gt;</tw-passagedata><tw-passagedata pid="35" name="Korkeakoulut" tags="" position="950,250" size="100,100">&lt;hr&gt;
 &lt;p class=&quot;highlight&quot;&gt;
 Voit edetä ICT-alalla monia eri polkuja pitkin. Ammatillinen koulutus, AMK ja yliopisto eivät ole vastakohtia, vaan ne voivat täydentää toisiaan.
 &lt;/p&gt;
@@ -1614,39 +1622,18 @@ Yliopisto-opinnoissa keskitytään teoreettiseen osaamiseen ajatteluun ja tutkim
 &lt;/div&gt;
 
 &lt;div class=&quot;answer-group&quot;&gt;
-&lt;&lt;link &quot;Tehtävä&quot;&gt;&gt;
-  &lt;&lt;goto &quot;Ammattitutkimus: lomake&quot;&gt;&gt;
+&lt;&lt;link &quot;Takaisin tehtävään&quot;&gt;&gt;
+  &lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;
 &lt;&lt;/link&gt;&gt;
   &lt;/div&gt;
 &lt;hr&gt;
 
 
 
-</tw-passagedata><tw-passagedata pid="37" name="PassageHeader" tags="" position="650,25" size="100,100">&lt;div class=&quot;navbar-fixed&quot;&gt;
+</tw-passagedata><tw-passagedata pid="36" name="Kansi" tags="" position="425,50" size="100,100">&lt;&lt;script&gt;&gt;
+State.reset();
+&lt;&lt;/script&gt;&gt;
 
-  &lt;span class=&quot;btn&quot;&gt;
-    &lt;&lt;link &quot;← Takaisin&quot;&gt;&gt;
-      &lt;&lt;script&gt;&gt;
-        if (State.length &gt; 0) {
-          Engine.backward();
-        }
-      &lt;&lt;/script&gt;&gt;
-    &lt;&lt;/link&gt;&gt;
-  &lt;/span&gt;
-
-  &lt;span class=&quot;btn btn--danger&quot;&gt;
-    &lt;&lt;link &quot;Poistu&quot;&gt;&gt;
-      &lt;&lt;script&gt;&gt;
-        if (confirm(&quot;Haluatko varmasti poistua tehtävästä?&quot;)) {
-          State.reset();
-          Engine.play(&quot;Start&quot;);
-        }
-      &lt;&lt;/script&gt;&gt;
-    &lt;&lt;/link&gt;&gt;
-  &lt;/span&gt;
-
-&lt;/div&gt;
-</tw-passagedata><tw-passagedata pid="38" name="Alku" tags="" position="425,50" size="100,100">
 &lt;div class=&quot;cover-page&quot; role=&quot;button&quot; tabindex=&quot;0&quot;&gt;
   &lt;h1 class=&quot;cover-title&quot;&gt;ICT-ala&lt;/h1&gt;
 &lt;/div&gt;
@@ -1656,6 +1643,39 @@ $(document).one(&quot;click keypress&quot;, function () {
   Engine.play(&quot;Start&quot;);
 });
 &lt;&lt;/script&gt;&gt;
+</tw-passagedata><tw-passagedata pid="37" name="ICT: ammatinvalinta" tags="" position="750,375" size="100,100">&lt;h1&gt;Valitse ICT-ammatti&lt;/h1&gt;
+
+&lt;h2&gt;Ohjelmistokehitys ja koodaus&lt;/h2&gt;
+&lt;div class=&quot;answer-group&quot;&gt;
+&lt;&lt;link &quot;Ohjelmistokehittäjä&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;Ohjelmistokehittäjä&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link &quot;Peliohjelmoija&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;Peliohjelmoija&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link &quot;Web-kehittäjä&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;Web-kehittäjä&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link &quot;Sovelluskehittäjä&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;Sovelluskehittäjä&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;/div&gt;
+
+&lt;h2&gt;IT-tuki ja ylläpito&lt;/h2&gt;
+&lt;div class=&quot;answer-group&quot;&gt;
+&lt;&lt;link &quot;IT-tukihenkilö&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;IT-tukihenkilö&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link &quot;Järjestelmäasiantuntija&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;Järjestelmäasiantuntija&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link &quot;Verkkoasentaja&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;Verkkoasentaja&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link &quot;Palvelinasiantuntija&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;Palvelinasiantuntija&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;/div&gt;
+
+&lt;h2&gt;Kyberturva ja tietosuoja&lt;/h2&gt;
+&lt;div class=&quot;answer-group&quot;&gt;
+&lt;&lt;link &quot;Kyberturva-asiantuntija&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;Kyberturva-asiantuntija&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link &quot;Tietoturva-asiantuntija&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;Tietoturva-asiantuntija&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link &quot;Tietosuojavastaava&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;Tietosuojavastaava&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link &quot;SOC-analyytikko&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;SOC-analyytikko&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;/div&gt;
+
+&lt;h2&gt;Media, muotoilu ja peliala&lt;/h2&gt;
+&lt;div class=&quot;answer-group&quot;&gt;
+&lt;&lt;link &quot;Pelisuunnittelija&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;Pelisuunnittelija&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link &quot;3D-mallintaja&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;3D-mallintaja&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link &quot;Digitaalinen muotoilija&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;Digitaalinen muotoilija&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;&lt;link &quot;UI/UX-suunnittelija&quot;&gt;&gt;&lt;&lt;set $ammatti=&quot;UI/UX-suunnittelija&quot;&gt;&gt;&lt;&lt;goto &quot;Esitelmäpohja&quot;&gt;&gt;&lt;&lt;/link&gt;&gt;
+&lt;/div&gt;
 </tw-passagedata></tw-storydata>
 	<script id="script-sugarcube" type="text/javascript">
 	/*! SugarCube JS */
